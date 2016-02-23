@@ -328,9 +328,30 @@ Node::count_subscribers(const std::string & topic_name) const
   return count;
 }
 
-
 const Node::CallbackGroupWeakPtrList &
 Node::get_callback_groups() const
 {
   return callback_groups_;
+}
+
+void
+Node::busy_wait_for_subscriber(
+  const std::string & topic_name,
+  std::chrono::milliseconds timeout = std::chrono::milliseconds(1),
+  std::chrono::microseconds sleep_period = std::chrono::microseconds(100))
+{
+  if (strcmp(this->implementation_identifier, "rmw_fastrtps_cpp") == 0) {
+    printf("FastRTPS detected, sleeping for a fixed interval of %d ms\n", timeout);
+    (void)topic_name;
+    (void)sleep_period;
+    std::this_thread::sleep_for(timeout);
+    return;
+  }
+  std::chrono::microseconds time_slept(0);
+  while (this->count_subscribers(topic_name) == 0 &&
+    time_slept < std::chrono::duration_cast<std::chrono::microseconds>(timeout))
+  {
+    std::this_thread::sleep_for(sleep_period);
+    time_slept += sleep_period;
+  }
 }
