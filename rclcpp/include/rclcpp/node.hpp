@@ -253,11 +253,11 @@ public:
   get_callback_groups() const;
 
   RCLCPP_PUBLIC
-  void 
+  void
   busy_wait_for_subscriber(
-  const std::string & topic_name,
-  std::chrono::milliseconds timeout = std::chrono::milliseconds(1),
-  std::chrono::microseconds sleep_period = std::chrono::microseconds(100));
+    const std::string & topic_name,
+    std::chrono::milliseconds timeout = std::chrono::milliseconds(1),
+    std::chrono::microseconds sleep_period = std::chrono::microseconds(100));
 
   std::atomic_bool has_executor;
 
